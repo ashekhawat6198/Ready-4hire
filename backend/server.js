@@ -8,7 +8,8 @@ const cors=require("cors")
 const Server=require("socket.io");
 const cookieParser=require("cookie-parser");
 const {connectDB}=require("./config/database")
-
+const {notFound,errorHandler}=require("./middleware/errorMiddleware")
+const userRoutes=require("./routes/userRoutes")
 
 const PORT=process.env.PORT || 5000
 
@@ -30,8 +31,13 @@ app.use(
         credentials:true,
     })
 )
-// app.use(notFound)
-// app.use(errorHandler)
+
+// Routes
+app.use("/api/user",userRoutes);
+
+app.use(notFound)
+app.use(errorHandler)
+
 
 
 // socket io
