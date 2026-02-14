@@ -290,7 +290,7 @@ exports.submitAnswer=asyncHandler(async(req,res)=>{
 }) 
 
 
-exports.calculateOverallScore=async(sessionId)=>{
+const calculateOverallScore=async(sessionId)=>{
     const results=await Session.aggregate([
         {
             $match:{
@@ -304,10 +304,65 @@ exports.calculateOverallScore=async(sessionId)=>{
             $group:{
                 _id:'$_id',
                 avgTechnical:{
-                    $avg:{$cond:[{$eq:[]}]}
+                    $avg:{$cond:[{$eq:['$questions.isEvaluated',true]}, '$questions.technicalScore',0]},
+                   
+                },
+                 avgConfidence:{
+                   $avg:{$cond:[{$eq:['$questions.isEvaluated',true]}, '$questions.confidenceScore',0]},
                 }
+            }
+        },
+        {
+            $project:{
+                _id:0,
+                overallScore:{$round:[{$avg:['$avgTechnical','$avgConfidence']},0]},
+                avgTechnical:{$round:["$avgTechnical",0]},
+                avgConfidence:{$round:["$avgConfidence",0]}
             }
         }
 
-    ])
+    ]);
+     return results[0] || {overallScore:0,avgTechnical:0,avgConfidence:0}   
 }
+
+
+exports.endSession=asyncHandler(async(req,res)=>{
+    const sessionId=req.params.id;
+    const userId=req.user._id;
+
+    const session=await Session.findById(sessionId);
+    if(!session || session.user.toString() !== userId.toString() ){
+        return res.status(404).json({
+            success:false,
+            message:"Session not found or unauthorized user"
+        })
+    }
+
+    const isProcessing=session.questions.some(q=>q.isSubmitted && !q.isEvaluated);
+    if(isProcessing){
+        return res.status(400).json({
+            success:false,
+            message:"Cananot end interview while AI is processing answers."
+        })
+    }
+    if(session.status==='completed'){
+        return res.status(400).json({
+            success:false,
+            message:"Session is already completed"
+        })
+    }
+
+    const scoreSummary=await this.calculateOverallScore(sessionId);
+    session.overallScore=scoreSummary.calculateOverallScore || 0;
+    session.status='completed';
+    session.endTime=new Date();
+    session.matrics={
+        avgTechnical:scoreSummary.avgTechnical,
+        avgConfidence:scoreSummary.avgConfidence
+    };
+    await session.save();
+    const io = req.app.get('io');
+    pushSocketUpdate(io, userId, sessionId, 'SESSION_COMPLETED', 'Interview session ended early.', session);
+
+    res.json({ message: 'Session ended successfully.', session });
+})
