@@ -1,88 +1,76 @@
+import express from "express";
+import http from "http";
+import dotenv from "dotenv";
+import cors from "cors";
+import { Server } from "socket.io";
+import { connectDB } from "./config/database.js";
+import userRoutes from "./routes/userRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
-// import modules
-const express=require("express");
-const app=express();
-const http=require("http")
-const dotenv=require("dotenv");
-const cors=require("cors")
-const Server=require("socket.io");
-const cookieParser=require("cookie-parser");
-const {connectDB}=require("./config/database")
-const {notFound,errorHandler}=require("./middleware/errorMiddleware")
-const userRoutes=require("./routes/userRoutes")
-
-const PORT=process.env.PORT || 5000
-
-// loading environment variables from .env file  
 dotenv.config();
 
-
-
-// connecting database to backend
 connectDB();
 
+const app = express();
 
-// Middlerwares
-app.use(express.json())    // allows backend to read JSON data from requests
-app.use(cookieParser())    // allows backend to read cookies
-app.use(
-    cors({
-        origin:"*",
-        credentials:true,
-    })
-)
+const server = http.createServer(app);
 
-// Routes
-app.use("/api/user",userRoutes);
-
-app.use(notFound)
-app.use(errorHandler)
-
-
-
-// socket io
-const server=http.createServer(app);    // Express alone can’t handle Socket.IO So we wrap Express inside an HTTP server
-
-const allowOrigin=[
+const allowedOrigin = [
     'http://localhost:5174',
-    'http://localhost:5173'
+    'http://localhost:5173',
 ]
 
- const io=Server(server,{                                                  // initialize socket io
-    cors:{
-        origin:allowOrigin,
-        methods:['GET','POST','PUT','DELETE','PATCH','OPTIONS'],
-        credentials:true,
-        allowedHeaders:['Content-Type', 'Authorization']
+const io = new Server(server, {
+    cors: {
+        origin: allowedOrigin,
+        methods: ['GET', 'POST', 'PUT', 'DELETE',  'OPTIONS'],
+        credentials: true,
+        allowedHeaders: ['Content-Type', 'Authorization'],
     }
- })
+})
 
- io.on("connection",(socket)=>{
-    console.log(`A user connected ${socket.id}`)
+app.use(cors({
+    origin: allowedOrigin,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization',"X-Requested-With"],
+}))
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.set("io", io);
+
+app.get("/", (req, res) => {
+    res.send("API is running");
+});
+
+app.use("/api/users", userRoutes);
+app.use("/api/sessions", sessionRoutes);
+
+io.on("connection", (socket) => {
+    console.log(`A user Connected ${socket.id}`);
     const userId=socket.handshake.query.userId;
     if(userId){
-       
+
         socket.join(userId);
-        console.log(`User ${socket.id} joined room: ${userId}`)
+        console.log(`User ${socket.id} joined room: ${userId}`);
     }
 
-    socket.on("disconnect",()=>{
-       console.log(`User disconnected ${socket.id}`);
-    })
-    
- })
+    socket.on("disconnect", () => {
+        console.log(`User Disconnected ${socket.id}`);
+    });
+});
+
+app.use(notFound);
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5000;
+
+server.listen(
+    PORT,
+    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)
+);
 
 
-
- // Testing the server
-app.get("/", (req, res) => {
-   return res.json({
-    message:"Server is running"
-   })
-    })
-   
-
- // listning the server
- app.listen(PORT,()=>{
-    console.log(`App is listening at ${PORT}`)
- })

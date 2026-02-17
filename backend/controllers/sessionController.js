@@ -8,12 +8,12 @@ const mongoose=require("mongoose")
 
 
 const AI_SERVICE_URL="http://localhost:8000"
-const pushSocketUpdate=(io,userId,sessionId,status,message,sessionData=null)=>{
+const pushSocketUpdate=(io,userId,sessionId,status,message,session=null)=>{
     io.to(userId.toString()).emit("sessionUpdate",{
         sessionId,
         status,
         message,
-        sessionData
+        session
     });
 }
 
@@ -84,7 +84,7 @@ const createSession=asyncHandler(async(req,res)=>{
                 session.status="in-progress"
                 await session.save();
                 
-                pushSocketUpdate(io,userId,session._id,"questions are ready","starting interview...")
+                pushSocketUpdate(io,userId,session._id,"QUESTIONS_READY ","starting interview...")
            
             }catch(error){
                console.error(`Session creation failed:${error.message}`)
