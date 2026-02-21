@@ -17,21 +17,49 @@ const Header = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header
-      className="bg-slate-900/95 backdrop-blur-md text-white shadow-2xl sticky top-0
-   z-50 border-b border-slate-700/50"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items center">
-        <Link to="/" className="flex items-center space-x-2 group shrink-0">
-          <div className="bg-teal-500 p-1.5 rounded-lg group-hover:rotate-12 transition-transform duration-300">
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
+   <header
+  className="bg-slate-900/95 backdrop-blur-md text-white shadow-2xl sticky top-0
+  z-50 border-b border-teal-500/20"
+>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-12">
+    <Link to="/" className="flex items-center space-x-2 group shrink-0">
+      
+      {/* Icon Container */}
+      <div
+        className="bg-teal-500 p-1.5 rounded-lg
+        shadow-[0_0_15px_rgba(45,212,191,0.4)]
+        group-hover:bg-teal-400
+        group-hover:shadow-[0_0_25px_rgba(45,212,191,0.7)]
+        group-hover:rotate-12
+        transition-all duration-300"
+      >
+        <svg
+          className="w-6 h-6 text-slate-900"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <circle cx="12" cy="12" r="8" strokeWidth="2" />
+          <circle cx="12" cy="12" r="4" strokeWidth="2" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M12 2v4m0 12v4m10-10h-4M6 12H2"
+          />
+        </svg>
+      </div>
 
-          </div>
-          <span className=" text-lg sm:text-xl font-black tracking-tighter uppercase text-white group-hover:text-teal-400 transition-colors">AI <span className="text-teal-500">INT</span><span className="hidden sm:inline">erviewer</span></span>
-        </Link>
+      {/* Brand Text */}
+      <span className="text-lg sm:text-xl font-black tracking-tighter uppercase text-white">
+        Ready
+        <span className="text-teal-400 group-hover:text-teal-300 transition-colors">4</span>
+        <span className="hidden sm:inline group-hover:text-teal-400 transition-colors">
+          Hire
+        </span>
+      </span>
 
+    </Link>
         <nav className="hidden md:flex items-center space-x-6">
           {user ? (
             <>

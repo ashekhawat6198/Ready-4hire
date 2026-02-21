@@ -1,7 +1,6 @@
-const mongoose=require("mongoose");
+import mongoose from "mongoose";
 
-
-const questionSchema=mongoose.Schema({
+const questionSchema = new mongoose.Schema({
     questionText:{
         type:String,
         required:true
@@ -29,28 +28,28 @@ const questionSchema=mongoose.Schema({
     },
     isEvaluated:{
         type:Boolean,
-        default:false,
+        default:false
     },
-     technicalScore:{
+    technicalScore:{
         type:Number,
         default:0
-     },
-     confidenceScore:{
+    },
+    confidenceScore:{
         type:Number,
         default:0
-     },
-     aiFeedback:{
+    },
+    aiFeedback:{
         type:String,
-        default:"Not yet submitted or evaulated"
-     }
-})
+        default:"Not yet submitted or evaluated"
+    }
+});
 
-const sessionSchema=mongoose.Schema({
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true,
-        index:true
+const sessionSchema= new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+        index: true,
     },
     role:{
         type:String,
@@ -58,37 +57,33 @@ const sessionSchema=mongoose.Schema({
     },
     level:{
         type:String,
-        required:true,
+        required:true
     },
     interviewType:{
         type:String,
         enum:["oral-only","coding-mix"],
-        required:true,
+        required:true
     },
     status:{
         type:String,
-        enum:["pending","in-progress","completed","failed"]
+        enum:["pending","in-progress","completed","failed"],
+        default:"pending"
     },
-    overallScore:{
-        type:Number,
-        default:0
+    overallScore: {
+        type: Number,
+        default: 0,
     },
-    metrics:{
-        avgTechnical:{type:Number,default:0},
-        avgConfidence:{type:Number,default:0}
+    metrics: {
+        avgTechnical: { type: Number, default: 0 },
+        avgConfidence: { type: Number, default: 0 },
     },
     questions:[questionSchema],
-    startTime:{
-        type:Date,
-        default:Date.now()
-    },
-    endTime:{
-        type:Date
-    }
- 
+    startTime:{type:Date,default:Date.now},
+    endTime:{type:Date},
+   
+},{
+    timestamps:true
+});
 
-
-})
-
-
-module.exports=mongoose.model("Session",sessionSchema)
+const Session = mongoose.model("Session", sessionSchema);
+export default Session

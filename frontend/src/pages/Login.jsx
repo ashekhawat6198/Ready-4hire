@@ -74,7 +74,7 @@ const Login = () => {
       <div className="w-full max-w-md bg-white p-6 sm:p-10  border border-gray-200 rounded-2xl shadow-xl ">
         <div className="text-center mb-8 ">
           <h2 className="text-xs font-black uppercase tracking-[0.3m] text-teal-600 mb-2">
-            AI Interviewer
+            Ready 4Hire
           </h2>
           <h1 className="text-3xl sm:text-4xl font-black text-gray-900 leading-tight">
             Welcome <span className="text-teal-500">Back</span>

@@ -1,32 +1,30 @@
-const jwt=require("jsonwebtoken");
-require("dotenv").config();
+import jwt from 'jsonwebtoken'
+import asyncHandler from 'express-async-handler'
+import User from '../models/User.js'
 
-exports.auth=async(req,res,next)=>{
-    try{
-
-        const token=req.cookies.token || req.body.token || req.header("Authorization").replace("Bearer ","");
-        if(!token){
-            return res.json({
-                success:false,
-                message:"Token is Missing"
-            })
-        }
-
+const protect=asyncHandler(async(req,res,next)=>{
+    let token;
+    if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
         try{
-            const decode=jwt.decode(token,process.env.JWT_SECRET);
-            req.user=decode
-        }catch(err){
-            return res.json({
-                success:false,
-                message:"Token is invalid"
-            })
+            //'Bearer dhjsdhwdskck...'
+            token=req.headers.authorization.split(' ')[1];
+            const decoded=jwt.verify(token,process.env.JWT_SECRET);
+            req.user=await User.findById(decoded.id).select("-password");
+            if(!req.user){
+                res.status(401);
+                throw new Error('User not found');
+            }
+            next();
+        }catch(error){
+            console.error(error);
+            res.status(401);
+            throw new Error("Not authorised,token failed.");
         }
-        next();
-    }catch(err){
-         return res.status(401).json({
-            success:false,
-            message:`Ha ji ${err.message}`
-         })
     }
-}
+    if(!token){
+        res.status(401);
+        throw new Error("Not authorised , no token");
+    }
+})
 
+export {protect};

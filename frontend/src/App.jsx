@@ -21,8 +21,9 @@ const App = () => {
         <Routes>
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          
           <Route path='/' element={<PrivateRoute />}>
-            <Route path='/' element={<Dashboard />} />
+             <Route path='/' element={<Dashboard />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/interview/:sessionId' element={<InterviewRunner />} />
             <Route path="/review/:sessionId" element={<SessionReview />} />

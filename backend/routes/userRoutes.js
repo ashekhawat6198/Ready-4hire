@@ -1,14 +1,12 @@
-const express=require("express");
-const router=express.Router();
+import express from "express";
+import { registerUser, loginUser, googleLogin,getUserProfile, updateUserProfile   } from "../controllers/userController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
-
-const {registerUser,loginUser,googleLogin,updateUserProfile}=require("../controllers/userController");
-const {auth}=require("../middleware/authMiddleware");
-
+const router =express.Router();
 
 router.post("/register",registerUser);
 router.post("/login",loginUser);
 router.post("/google",googleLogin);
-router.put("/updateProfile",auth,updateUserProfile)
+router.route("/profile").get(protect,getUserProfile).put(protect,updateUserProfile);
 
-module.exports=router
+export default router;
