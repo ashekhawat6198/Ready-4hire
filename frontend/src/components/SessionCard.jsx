@@ -1,34 +1,34 @@
 import React from "react";
 
 const SessionCard = (session, onClick, onDelete) => {
-  const getIcon = () => {
-    const r = session.role;
+  // const getIcon = () => {
+  //   const r = session.role;
 
-    if (r.includes("Python")) return "🐍";
-    if (
-      r.includes("MERN") ||
-      r.includes("MEAN") ||
-      r.includes("React") ||
-      r.includes("Frontend")
-    )
-      return "⚛️";
-    if (r.includes("Data") || r.includes("Machine") || r.includes("AI"))
-      return "📊";
-    if (r.includes("DevOps") || r.includes("Cloud") || r.includes("SRE"))
-      return "☁️";
-    if (r.includes("Security") || r.includes("Cyber")) return "🛡️";
-    if (r.includes("Blockchain") || r.includes("Web3")) return "⛓️";
-    if (r.includes("Mobile") || r.includes("iOS") || r.includes("Android"))
-      return "📱";
-    if (r.includes("Game")) return "🎮";
-    if (r.includes("UI") || r.includes("UX") || r.includes("Designer"))
-      return "🎨";
-    if (r.includes("QA") || r.includes("Test")) return "🧪";
-    if (r.includes("Product") || r.includes("Manager")) return "📝";
-    if (r.includes("Java") || r.includes("Backend")) return "☕";
+  // //   if (r.includes("Python")) return "🐍";
+  // //   if (
+  // //     r.includes("MERN") ||
+  // //     r.includes("MEAN") ||
+  // //     r.includes("React") ||
+  // //     r.includes("Frontend")
+  // //   )
+  // //     return "⚛️";
+  // //   if (r.includes("Data") || r.includes("Machine") || r.includes("AI"))
+  // //     return "📊";
+  // //   if (r.includes("DevOps") || r.includes("Cloud") || r.includes("SRE"))
+  // //     return "☁️";
+  // //   if (r.includes("Security") || r.includes("Cyber")) return "🛡️";
+  // //   if (r.includes("Blockchain") || r.includes("Web3")) return "⛓️";
+  // //   if (r.includes("Mobile") || r.includes("iOS") || r.includes("Android"))
+  // //     return "📱";
+  // //   if (r.includes("Game")) return "🎮";
+  // //   if (r.includes("UI") || r.includes("UX") || r.includes("Designer"))
+  // //     return "🎨";
+  // //   if (r.includes("QA") || r.includes("Test")) return "🧪";
+  // //   if (r.includes("Product") || r.includes("Manager")) return "📝";
+  // //   if (r.includes("Java") || r.includes("Backend")) return "☕";
 
-    return "💻"; // Default
-  };
+  // //   return "💻"; // Default
+  // // };
 
   const iconBg =
     session.status === "completed"
@@ -59,7 +59,7 @@ const SessionCard = (session, onClick, onDelete) => {
           className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl sm:rounded-2xl flex
             items-center justify-center text-xl sm:text-2xl shadow-sm ${iconBg}`}
         >
-          {getIcon()}
+          {/* {getIcon()} */}
         </div>
      
       <div className="overflow-hidden">
