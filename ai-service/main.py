@@ -1,23 +1,58 @@
-import uvicorn
-import os
-import io
-import json
-import tempfile
-from fastapi import FastAPI,HTTPException,UploadFile,File
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from dotenv import load_dotenv
+import uvicorn   # runs fastapi server
+import os        # read enviornment varaibles
+import io        # handle files in memory
+import json      # work with json
+import tempfile  # create temporary files
+from fastapi import FastAPI,HTTPException,UploadFile,File # fast api tools=> create app,send error, upload files(like audio)
+from fastapi.middleware.cors import CORSMiddleware # allows backend to talk to ai server without errors
+from pydantic import BaseModel # used to define request and responnse formats
+from dotenv import load_dotenv # load values from env
 from typing import Optional
-import ollama
-import openai
-import whisper
-from pydub import AudioSegment
+import ollama       # ai tootls
+import openai       # ai tootls 
+import whisper      # ai tootls (sppech to text)
+from pydub import AudioSegment  # convert or process audio files
 
 load_dotenv()
 
-AI_SERVICE_PORT=os.getenv("AI_SERVICE_PORT",8000)
-OLLAMA_MODEL_NAME=os.getenv("OLLAMA_MODEL_NAME","mistral")
+AI_SERVICE_PORT=os.getenv("AI_SERVICE_PORT",8000)  # port number(default 8000)
 
-app=FastAPI(title="AI Interviewer Microservice",version="1.0")
-origins=["*"]
+OLLAMA_MODEL_NAME=os.getenv("OLLAMA_MODEL_NAME","mistral") # ai model name (default mistral)
 
+app=FastAPI(title="AI Interviewer Microservice",version="1.0")  # creates fast api app
+
+origins=["*"]   # any frontend(backend) can access this api
+
+
+app.add_middleware(             # fix cors errors when frontend(backend) call this
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+WHISPER_MODEL=None   # variable to store the model
+
+try:                                   # loading whisper model 
+    print("Loading Whisper Model")
+    WHISPER_MODEL=whisper.load_model("base.en")
+    print("Whisper Model Loaded Successfully")
+except Exception as e:
+    print("Error while loading Whisper Model")
+    print(e)
+
+    
+class QuestionRequest(BaseModel):        # this defines what the user sends
+    role:str="MERN Stack Developer"
+    level:str="Junior"
+    count:int=5
+    interview_type:str="coding-mix"
+
+class QuestionResponse(BaseModel):  # this define what api returns 
+    question:list[str]
+    model_used:str
+
+@app.get("/")              # when you open localhost 8000 you get this message
+async def root():
+    return {"message":"Hello from AI Interviewer Microservice !","model":OLLAMA_MODEL_NAME}
