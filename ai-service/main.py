@@ -8,14 +8,13 @@ from fastapi.middleware.cors import CORSMiddleware # allows backend to talk to a
 from pydantic import BaseModel # used to define request and responnse formats
 from dotenv import load_dotenv # load values from env
 from typing import Optional
-import ollama       # ai tootls
-import openai       # ai tootls 
+import ollama       # ai tootls  
 import whisper      # ai tootls (sppech to text)
 from pydub import AudioSegment  # convert or process audio files
 
 load_dotenv()
 
-AI_SERVICE_PORT=os.getenv("AI_SERVICE_PORT",8000)  # port number(default 8000)
+AI_SERVICE_PORT=int(os.getenv("AI_SERVICE_PORT",8000))  # port number(default 8000)
 
 OLLAMA_MODEL_NAME=os.getenv("OLLAMA_MODEL_NAME","mistral") # ai model name (default mistral)
 
@@ -56,3 +55,24 @@ class QuestionResponse(BaseModel):  # this define what api returns
 @app.get("/")              # when you open localhost 8000 you get this message
 async def root():
     return {"message":"Hello from AI Interviewer Microservice !","model":OLLAMA_MODEL_NAME}
+
+@app.post("/generate-questions",response_model=QuestionResponse)
+async def generate_questions(request:QuestionRequest):
+    questions=ollama.generate_questions(request)
+    try:
+        if request.interview_type=="coding-mix":
+            coding_count=int(request.count * 0.2)
+            oral_count=int(request.count) - int(coding_count)
+
+            instruction=(
+                f"The first {coding_count} questions MUST be coding challenge requiring function implementation."
+                f"The remaining {oral_count} quetions MUST be conceptual oral quetions"
+            )
+        else:
+            
+
+    return {"question":questions,"model_used":OLLAMA_MODEL_NAME}
+
+if __name__=="__main__":
+    uvicorn.run(app,host="0.0.0.0",port=AI_SERVICE_PORT)
+
