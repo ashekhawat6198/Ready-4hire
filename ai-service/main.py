@@ -58,20 +58,70 @@ async def root():
 
 @app.post("/generate-questions",response_model=QuestionResponse)
 async def generate_questions(request:QuestionRequest):
-    questions=ollama.generate_questions(request)
+   
     try:
         if request.interview_type=="coding-mix":
             coding_count=int(request.count * 0.2)
             oral_count=int(request.count) - int(coding_count)
 
-            instruction=(
+            instruction=(                # instruction for the AI
                 f"The first {coding_count} questions MUST be coding challenge requiring function implementation."
                 f"The remaining {oral_count} quetions MUST be conceptual oral quetions"
             )
         else:
+            instruction=(
+            "All questions MUST be conceptual oral questions."
+            "Do not generate any coding or implementation challenges "
+            )
             
+        system_prompt=(
+             "You are a professional technical interviewer."
+             "Task:Generate intervview questions. No conversational text or numbering."
+             f"Crucial: {instruction}"
+             "Output exactly one question per line"
+            )
 
-    return {"question":questions,"model_used":OLLAMA_MODEL_NAME}
+        user_prompt=(
+                f"Generate exactly {request.count} unique interview questions for a {request.level} level {request.role} . "
+            )
+
+        response=ollama.generate(
+                model=OLLAMA_MODEL_NAME,
+                prompt=user_prompt,
+                system=system_prompt,
+                options={"temperature":0.6,
+                         "num_gpu": 0  }
+            )
+
+        raw_text=response['response'].strip()
+        questions=[q.strip() for q in raw_text.split('\n') if q.strip()]
+        return (QuestionResponse(question=questions[:request.count],model_used=OLLAMA_MODEL_NAME ))
+    
+    except Exception as e:
+        raise HTTPException(status_coode=500,detail=str(e))
+
+ 
+@app.post("/transcribe")
+async def transcribe_audio(file:UploadFile=File(...)):
+    try:
+        audio_bytes=await file.read()    # read the file and store in memory
+        audio_in_memory=io.BytesIO(audio_bytes)   # makes the voice data look like a file
+        audio_segment=AudioSegment.from_file(audio_in_memory)   # Translate the voice file into a language the computer understands.
+        with tempfile.NamedTemporaryFile(delete=False,suffix=".mp3") as tmp:    # create temporary file on computer which ends with .mp3
+            temp_audio_path=tmp.name                         # save the path of temporary file
+            audio_segment.export(temp_audio_path,format="mp3")    # save audio in temporary file
+        if not WHISPER_MODEL:            # Check if Whisper (speech-to-text model) is loaded.
+            raise HTTPException(status_code=503,detail="Whisper Model is not loaded")   # not ready show error
+        
+        result=WHISPER_MODEL.transcribe(temp_audio_path)   # converting voice to text
+        os.remove(temp_audio_path)                   # delete the temporary file
+        return {"transcription":result["text"].strip()}     # return respone to user
+    
+    except Exception as e:
+        if 'temp_audio_path' in locals() and os.path.exists(temp_audio_path):
+            os.remove(temp_audio_path)
+        raise HTTPException(status_code=500,detail=str(e))            
+
 
 if __name__=="__main__":
     uvicorn.run(app,host="0.0.0.0",port=AI_SERVICE_PORT)
