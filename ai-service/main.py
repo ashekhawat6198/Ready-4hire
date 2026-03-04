@@ -52,6 +52,21 @@ class QuestionResponse(BaseModel):  # this define what api returns
     question:list[str]
     model_used:str
 
+class EvaluationRequest(BaseModel):
+    question:str
+    question_type:str
+    role:str
+    level:str
+    user_answer:Optional[str]=None
+    user_code:Optional[str]=None
+
+class EvaluationResponse(BaseModel):
+    technicalScore:int
+    confidenceScore:int
+    aiFeedback:str
+    idealAnswer:str 
+
+
 @app.get("/")              # when you open localhost 8000 you get this message
 async def root():
     return {"message":"Hello from AI Interviewer Microservice !","model":OLLAMA_MODEL_NAME}
@@ -122,6 +137,72 @@ async def transcribe_audio(file:UploadFile=File(...)):
             os.remove(temp_audio_path)
         raise HTTPException(status_code=500,detail=str(e))            
 
+
+@app.post("/evaluate",response_model=EvaluationResponse)
+async def evaluate(request:EvaluationRequest):
+    try:
+        if request.question_type=="oral":
+            assessment_instruction=(
+                "This is a conceptual oral question. Focus purely on candidate's verbal explaination."
+                "Ignore any code blocks."
+                "CRITICAL:If the transcript is empty, nonsense (e.g. 'blah blah','testing' ) or irrelevent to the question, SCORE 0"
+
+            )
+        else:
+            assessment_instruction=(
+                "This is a coding challenge question. Evaluate the code logic and efficiency."
+                "Use the transcription only for insight into their thought process."
+                "CRITICAL:If the code is 'undefined',empty, just random comments, or random characters, SCORE 0"
+
+            ) 
+
+        systemp_prompt=(
+            "You are a strict technical interviewer."
+            "Do not hallucinate positive reviews for bad input."
+            "RULE 1:If the answer is gibberish, irrelevant, or missing, return 'technicalScore':0 and 'confidenceScore':0"
+            "RULE 2:For 'idealAnswer', provide a clean Markdown string. Do not return a nested JSON object."
+            f"Context:{assessment_instruction}"
+            "Respond ONLY with a JSON object."
+            "Required keys:'technicalScore' (0-100), 'confidenceScore' (0-100), 'aiFeedback', 'idealAnswer'."  
+        )  
+
+        user_prompt=(
+           
+            f"Role:{request.role}\n"
+            f"Question:{request.question}\n"
+            f"Level:{request.level}\n"
+            f"Verval Answer: {request.user_answer or 'No verbal answer provided'}\n"  
+            f"Code:{request.user_code or 'No code provided'}\n"
+        )    
+
+        reponse=ollama.generate(
+          model=OLLAMA_MODEL_NAME,
+          prompt=user_prompt,
+          system=systemp_prompt,
+          format="json",
+          options={"temperature":0.1}
+        )
+        reponse_text=reponse['response'].strip()
+        try:
+
+            evaluation_data=json.loads(reponse_text)
+            if 'idealAnswer' in evaluation_data and not isinstance(evaluation_data['idealAnswer'],str):
+                evaluation_data['idealAnswer']=json.dumps(evaluation_data['idealAnswer'])
+            return EvaluationResponse(**evaluation_data)    
+        except json.JSONDecodeError:
+            import re
+            fixed_text=re.sub(r'[\r\n\t]',' ',reponse_text)
+            try:
+                 evaluation_data=json.loads(fixed_text)
+                 if 'idealAnswer' in evaluation_data and not isinstance(evaluation_data['idealAnswer'],str):
+                    evaluation_data['idealAnswer']=json.dumps(evaluation_data['idealAnswer'])
+                 return EvaluationResponse(**evaluation_data) 
+            except :
+                 print(f"Failed to parse responseL{reponse_text}")
+                 return EvaluationResponse(technicalScore=0,confidenceScore=0,aiFeedback="Failed to parse response",idealAnswer="Failed to parse response")
+    except Exception as e:
+        print(f"Failed to generate response:{e}")
+        raise HTTPException(status_code=500,detail=str(e))
 
 if __name__=="__main__":
     uvicorn.run(app,host="0.0.0.0",port=AI_SERVICE_PORT)
