@@ -1,7 +1,6 @@
-import dotenv from 'dotenv';
 import express from "express";
 import http from "http";
-import punycode from "punycode"
+import dotenv from "dotenv";
 import cors from "cors";
 import { Server } from "socket.io";
 import connectDB from "./config/db.js";
@@ -9,8 +8,7 @@ import userRoutes from "./routes/userRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
-
-dotenv.config()
+dotenv.config();
 
 connectDB();
 

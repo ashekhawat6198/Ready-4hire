@@ -79,9 +79,10 @@ const createSession = asyncHandler(async (req, res) => {
             }
 
             const aiData = await aiResponse.json();
+            console.log("AI Response:", aiData);
             const codingCount = interviewType === 'coding-mix' ? Math.floor(count * 0.2) : 0;
             // C. Map the raw questions into the structured Mongoose sub-document format
-            const questionsArray = aiData.questions.map((qText, index) => ({
+            const questionsArray = aiData.question.map((qText, index) => ({
                 questionText: qText,
                 questionType: index < codingCount ? 'coding' : 'oral',
                 isEvaluated: false,
