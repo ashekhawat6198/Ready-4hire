@@ -5,10 +5,12 @@ import {
     endSession, 
     getSessionById, 
     getSessions, 
-    submitAnswer
+    submitAnswer,
+    createResumeSession
 } from "../controllers/sessionController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { uploadSingleAudio } from "../middleware/uploadMiddleware.js";
+import uploadResume from "../middleware/resumeMiddleware.js";
 
 const router = express.Router();
 
@@ -29,4 +31,5 @@ router.route("/:id")
 router.route("/:id/submit-answer").post(uploadSingleAudio, submitAnswer);
 router.route("/:id/end").post(endSession);
 
+router.post("/resume-session",uploadResume.single("resume"),createResumeSession)
 export default router;

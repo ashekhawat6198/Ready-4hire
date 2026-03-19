@@ -7,6 +7,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import leaderboardRoutes from "./routes/leaderboardRoutes.js"
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/sessions", sessionRoutes);
+app.use("/api/rank",leaderboardRoutes)
 
 io.on("connection", (socket) => {
     console.log(`A user Connected ${socket.id}`);

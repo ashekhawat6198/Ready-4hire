@@ -53,6 +53,20 @@ export const createSession = createAsyncThunk('sessions/create', async (sessionD
     }
 })
 
+
+export const resumeCreateSession=createAsyncThunk('sessions/resume-session',async(file,thunkAPI)=>{
+    try{
+         const formData = new FormData();
+      formData.append("resume", file);
+         const response=await api.post('/resume-session',formData);
+         return response.data;
+
+    }catch(error){
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+        return thunkAPI.rejectWithValue(message);
+    }
+})
+
 export const getSessionById = createAsyncThunk('sessions/getOne', async (sessionId, thunkAPI) => {
     try {
         const response = await api.get(`/${sessionId}`);
@@ -148,6 +162,15 @@ export const sessionSlice = createSlice({
             .addCase(createSession.pending, (state) => { state.isLoading = true; state.isGenerating = true; state.activeSession = null; })
             .addCase(createSession.fulfilled, (state) => { state.isLoading = false; })
             .addCase(createSession.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isError = true;
+                state.isGenerating = false;
+                state.message = action.payload;
+            })
+
+             .addCase(resumeCreateSession.pending, (state) => { state.isLoading = true; state.isGenerating = true; state.activeSession = null; })
+            .addCase(resumeCreateSession.fulfilled, (state) => { state.isLoading = false; })
+            .addCase(resumeCreateSession.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
                 state.isGenerating = false;

@@ -66,6 +66,14 @@ class EvaluationResponse(BaseModel):
     aiFeedback:str
     idealAnswer:str 
 
+class ResumeInterviewRequest(BaseModel):
+    resume_text:str
+    count:int = 5
+
+class ResumeInterviewResponse(BaseModel):
+    questions: list[str]
+    model_used: str
+
 
 @app.get("/")              # when you open localhost 8000 you get this message
 async def root():
@@ -203,6 +211,58 @@ async def evaluate(request:EvaluationRequest):
     except Exception as e:
         print(f"Failed to generate response:{e}")
         raise HTTPException(status_code=500,detail=str(e))
+    
+
+
+
+@app.post("/resume-interview",response_model=ResumeInterviewResponse)
+async def generate_resume_questions(request:ResumeInterviewRequest):
+
+    try:
+
+        coding_count=int(request.count * 0.2)
+        oral_count=int(request.count) - int(coding_count)
+
+        instruction=(                # instruction for the AI
+                f"The first {coding_count} questions MUST be coding challenge requiring function implementation."
+                f"The remaining {oral_count} quetions MUST be conceptual oral quetions"
+        )
+        system_prompt=(
+            
+            "You are a professional technical interviewer."
+            "Analyze the candidate's resume and generate interview questions based on the skills, technologies."
+             f"Crucial: {instruction}"
+            "Output exactly one question per line."
+            
+        )
+        
+        user_prompt=(
+            f"Candidate Resume:\n {request.resume_text}. \n\n "
+            f"Generate exactly {request.count} interview questions based on this resume."
+        )
+        
+        response = ollama.generate(
+            model=OLLAMA_MODEL_NAME,
+            prompt=user_prompt,
+            system=system_prompt,
+            options={
+                "temperature": 0.6
+            }
+        )
+
+        raw_text=response['response'].strip()
+
+        questions = [
+            q.strip() for q in raw_text.split("\n") if q.strip()
+        ]
+        
+        return ResumeInterviewResponse(
+            questions=questions[:request.count],
+            model_used=OLLAMA_MODEL_NAME
+        )
+    
+    except Exception as e:
+         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__=="__main__":
     uvicorn.run(app,host="0.0.0.0",port=AI_SERVICE_PORT)

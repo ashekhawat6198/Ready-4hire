@@ -1,26 +1,44 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { resumeCreateSession } from "../features/sessions/sessionSlice.js" 
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import { reset } from "../features/sessions/sessionSlice.js";
 
-function ResumeUploadPage({ user }) {
+function ResumeUploadPage() {
 
   const [file, setFile] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
+  
+  const {user}=useSelector((state)=>state.auth)
+ const dispatch=useDispatch();
+
+   const { sessions, isLoading, isGenerating, isError, message } = useSelector((state) => state.sessions);
+  const isProcessing = isGenerating;
+
+
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
 
+  
+    useEffect(() => {
+      if (isError && message) {
+        toast.error(message);
+        dispatch(reset());
+      }
+    }, [isError, message, dispatch]);
+  
+
   const handleUpload = (e) => {
-    e.preventDefault();
-
-    if (!file) return;
-
-    setIsUploading(true);
-
-    // simulate upload
-    setTimeout(() => {
-      setIsUploading(false);
-      alert("Resume uploaded successfully!");
-    }, 1500);
+     e.preventDefault();
+     if(!file){
+      alert("Please select a resume first")
+      return;
+     }
+     dispatch(resumeCreateSession(file))
+     
   };
 
   return (
@@ -100,25 +118,8 @@ function ResumeUploadPage({ user }) {
          
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={!file || isUploading}
-            className={`w-full h-[48px] rounded-xl font-bold text-white flex items-center justify-center gap-2 ${
-              isUploading
-                ? "bg-slate-300"
-                : "bg-teal-600 hover:bg-teal-700"
-            }`}
-          >
-            {isUploading ? (
-              <>
-                <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
-                Uploading...
-              </>
-            ) : (
-              <span className="text-sm">
-                Analyze Resume & Start Interview
-              </span>
-            )}
+            <button type="submit" disabled={isProcessing} className={`w-full h-[48px] rounded-xl font-bold text-white flex items-center justify-center gap-2 ${isProcessing ? 'bg-slate-300' : 'bg-teal-600 hover:bg-teal-700'}`}>
+            {isProcessing ? <><span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span> Generating...</> : <span className="text-sm">Start Interview</span>}
           </button>
 
         </form>

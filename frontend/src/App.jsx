@@ -12,6 +12,7 @@ import InterviewRunner from './pages/InterviewRunner';
 import SessionReview from './pages/SessionReview';
 import NotFound from './pages/NotFound';
 import ResumeUploader from './pages/ResumeUploader';
+import Leaderboard from './pages/Leaderboard';
 
 const App = () => {
   useSocket();
@@ -28,6 +29,7 @@ const App = () => {
             <Route path='/resumeUploader' element={<ResumeUploader/>}/>
             <Route path='/interview/:sessionId' element={<InterviewRunner />} />
             <Route path="/review/:sessionId" element={<SessionReview />} />
+            <Route path="/leaderboard" element={<Leaderboard/>}/>
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -12,6 +12,16 @@ const userSchema=mongoose.Schema({
         unique:true,
         trim:true
     },
+    overallScore:{
+      type:Number,
+      default:0
+    },
+
+    points:{
+      type:Number,
+      default:0
+    },
+  
     password:{
         type:String,
         required:function(){
@@ -27,6 +37,7 @@ const userSchema=mongoose.Schema({
         type:String,
         default:"MERN Stack Developer"
     },
+  
 },{
     timestamps:true
 })

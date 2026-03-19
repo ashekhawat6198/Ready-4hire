@@ -37,6 +37,8 @@ const registerUser = asyncHandler(async (req, res) => {
             email: user.email,
             preferredRole: user.preferredRole,
             token: generateToken(user._id),
+            points:user.points,
+            overallScore:user.overallScore
         });
     } else {
         res.status(400);
@@ -53,11 +55,13 @@ const loginUser = asyncHandler(async (req, res) => {
     
     if (user && (await user.matchPassword(password))) {
         res.json({
-            _id: user._id,
+             _id: user._id,
             name: user.name,
             email: user.email,
             preferredRole: user.preferredRole,
             token: generateToken(user._id),
+            points:user.points,
+            overallScore:user.overallScore
         });
     } else {
         res.status(401); 
@@ -107,6 +111,9 @@ const googleLogin = asyncHandler(async (req, res) => {
             email: user.email,
             preferredRole: user.preferredRole,
             token: generateToken(user._id),
+            points:user.points,
+            level:user.level,
+            overallScore:user.overallScore
         });
     } else {
         res.status(400);
@@ -124,6 +131,9 @@ const getUserProfile = asyncHandler(async (req, res) => {
             email: req.user.email,
             preferredRole: req.user.preferredRole,
             token: generateToken(req.user._id),
+            points:req.user.points,
+            level:req.user.level,
+            overallScore:req.user.overallScore
         });
     } else {
         res.status(404);

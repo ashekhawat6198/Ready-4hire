@@ -8,7 +8,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const {user} = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
   const onLogout = () => {
     dispatch(logout());
     dispatch(reset());
@@ -17,49 +17,49 @@ const Header = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-   <header
-  className="bg-slate-900/95 backdrop-blur-md text-white shadow-2xl sticky top-0
+    <header
+      className="bg-slate-900/95 backdrop-blur-md text-white shadow-2xl sticky top-0
   z-50 border-b border-teal-500/20"
->
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-12">
-    <Link to="/" className="flex items-center space-x-2 group shrink-0">
-      
-      {/* Icon Container */}
-      <div
-        className="bg-teal-500 p-1.5 rounded-lg
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-12">
+        <Link to="/" className="flex items-center space-x-2 group shrink-0">
+          {/* Icon Container */}
+          <div
+            className="bg-teal-500 p-1.5 rounded-lg
         shadow-[0_0_15px_rgba(45,212,191,0.4)]
         group-hover:bg-teal-400
         group-hover:shadow-[0_0_25px_rgba(45,212,191,0.7)]
         group-hover:rotate-12
         transition-all duration-300"
-      >
-        <svg
-          className="w-6 h-6 text-slate-900"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <circle cx="12" cy="12" r="8" strokeWidth="2" />
-          <circle cx="12" cy="12" r="4" strokeWidth="2" />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M12 2v4m0 12v4m10-10h-4M6 12H2"
-          />
-        </svg>
-      </div>
+          >
+            <svg
+              className="w-6 h-6 text-slate-900"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="8" strokeWidth="2" />
+              <circle cx="12" cy="12" r="4" strokeWidth="2" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 2v4m0 12v4m10-10h-4M6 12H2"
+              />
+            </svg>
+          </div>
 
-      {/* Brand Text */}
-      <span className="text-lg sm:text-xl font-black tracking-tighter uppercase text-white">
-        Ready
-        <span className="text-teal-400 group-hover:text-teal-300 transition-colors">4</span>
-        <span className="hidden sm:inline group-hover:text-teal-400 transition-colors">
-          Hire
-        </span>
-      </span>
-
-    </Link>
+          {/* Brand Text */}
+          <span className="text-lg sm:text-xl font-black tracking-tighter uppercase text-white">
+            Ready
+            <span className="text-teal-400 group-hover:text-teal-300 transition-colors">
+              4
+            </span>
+            <span className="hidden sm:inline group-hover:text-teal-400 transition-colors">
+              Hire
+            </span>
+          </span>
+        </Link>
         <nav className="hidden md:flex items-center space-x-6">
           {user ? (
             <>
@@ -75,12 +75,14 @@ const Header = () => {
               >
                 Profile
               </Link>
-              <div className="flex items-center space-x-2 bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-700">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-xs font-bold text-slate-300 uppercase">
-                 {user.name.split(' ')[0]}
-                </span>
-              </div>
+              <Link to="/leaderboard">
+                <div className="flex items-center space-x-2 bg-slate-800/50 px-4 py-1.5 rounded-full border border-slate-700">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-bold text-slate-300 uppercase">
+                    Leaderboard
+                  </span>
+                </div>
+              </Link>
               <button
                 onClick={onLogout}
                 className="bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase tracking-widest py-2.5 px-5 rounded-xl transition duration-300 shadow-lg active:scale-95"
@@ -106,41 +108,88 @@ const Header = () => {
           )}
         </nav>
 
-        <button onClick={()=>setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 rounded-lg bg-slate-100 border border-slate-700 text-slate-400 hover:text-teal-400 transition-colors ">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden p-2 rounded-lg bg-slate-100 border border-slate-700 text-slate-400 hover:text-teal-400 transition-colors "
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             {isMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             )}
           </svg>
         </button>
       </div>
 
-      {
-        isMenuOpen && (
-          <div className="md:hidden bg-slate-900 border-t border-slate-800 animate-in slide-in-from-top-2 duration-300">
-            <div className="px-6 py-8 space-y-4">
-               {user ? (
+      {isMenuOpen && (
+        <div className="md:hidden bg-slate-900 border-t border-slate-800 animate-in slide-in-from-top-2 duration-300">
+          <div className="px-6 py-8 space-y-4">
+            {user ? (
               <>
                 <div className="flex items-center space-x-3 mb-6 p-4 bg-slate-800 rounded-2xl border border-slate-700">
-                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                   <span className="text-lg font-black uppercase tracking-tighter text-slate-200">{user.name}</span>
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-lg font-black uppercase tracking-tighter text-slate-200">
+                    {user.name}
+                  </span>
                 </div>
-                <Link to="/" onClick={() => setIsMenuOpen(false)} className={`block py-4 text-xl font-black uppercase tracking-widest border-b border-slate-800 ${isActive('/') ? 'text-teal-400' : 'text-slate-400'}`}>Dashboard</Link>
-                <Link to="/profile" onClick={() => setIsMenuOpen(false)} className={`block py-4 text-xl font-black uppercase tracking-widest border-b border-slate-800 ${isActive('/profile') ? 'text-teal-400' : 'text-slate-400'}`}>Profile</Link>
-                <button onClick={onLogout} className="w-full mt-6 bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">Logout</button>
+                <Link
+                  to="/"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block py-4 text-xl font-black uppercase tracking-widest border-b border-slate-800 ${isActive("/") ? "text-teal-400" : "text-slate-400"}`}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/profile"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block py-4 text-xl font-black uppercase tracking-widest border-b border-slate-800 ${isActive("/profile") ? "text-teal-400" : "text-slate-400"}`}
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={onLogout}
+                  className="w-full mt-6 bg-rose-600 hover:bg-rose-700 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all"
+                >
+                  Logout
+                </button>
               </>
             ) : (
               <>
-                <Link to="/login" onClick={() => setIsMenuOpen(false)} className={`block py-4 text-xl font-black uppercase tracking-widest border-b border-slate-800 ${isActive('/login') ? 'text-teal-400' : 'text-slate-400'}`}>Login</Link>
-                <Link to="/register" onClick={() => setIsMenuOpen(false)} className={`block py-4 text-xl font-black uppercase tracking-widest ${isActive('/register') ? 'text-teal-400' : 'text-slate-400'}`}>Register</Link>
+                <Link
+                  to="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block py-4 text-xl font-black uppercase tracking-widest border-b border-slate-800 ${isActive("/login") ? "text-teal-400" : "text-slate-400"}`}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block py-4 text-xl font-black uppercase tracking-widest ${isActive("/register") ? "text-teal-400" : "text-slate-400"}`}
+                >
+                  Register
+                </Link>
               </>
             )}
-            </div>
           </div>
-        )
-      }
+        </div>
+      )}
     </header>
   );
 };
