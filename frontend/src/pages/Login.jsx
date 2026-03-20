@@ -127,7 +127,7 @@ const Login = () => {
           </button>
         </form>
         <div className="flex-grow border-t border-gray-100 "></div>
-        <span className="mx-4 text-gray-400 text-[10px] font-black tracking-widest uppercase">Socail Login</span>
+        <span className="mx-4 text-gray-400 text-[10px] font-black tracking-widest uppercase">Social Login</span>
         <div className="flex-grow border-t border-gray-100"></div>
         <div className="w-full flex items-center justify-center ">
           <GoogleLogin onSuccess={handleGoogleSuccess} onError={()=>toast.error("Google Login Failed")}

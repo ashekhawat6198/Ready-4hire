@@ -36,10 +36,10 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"))
+  
   
   const { sessions, isLoading, isGenerating, isError, message } = useSelector((state) => state.sessions);
-  
+  const {user}=useSelector((state)=>state.auth)
   const isProcessing = isGenerating;
 
   const [formData, setFormData] = useState({
@@ -53,7 +53,6 @@ const Dashboard = () => {
   dispatch(getSessions());
 }, [dispatch]);
 
-  
 
   useEffect(() => {
     if (isError && message) {
@@ -117,19 +116,6 @@ Ready for your technical prep?
 </div>
 
 {/* ADDED USER STATS */}
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-  <div className="bg-white rounded-xl p-4 shadow text-center">
-    <p className="text-xs text-gray-400">Points</p>
-    <p className="text-xl font-bold text-teal-600">{user.points || 0}</p>
-  </div>
-
- 
-
-  <div className="bg-white rounded-xl p-4 shadow text-center">
-    <p className="text-xs text-gray-400">Overall Score</p>
-    <p className="text-xl font-bold">{user.overallScore || 0}</p>
-  </div>
-</div>
 
 
 

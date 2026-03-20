@@ -57,7 +57,7 @@ export const createSession = createAsyncThunk('sessions/create', async (sessionD
 export const resumeCreateSession=createAsyncThunk('sessions/resume-session',async(file,thunkAPI)=>{
     try{
          const formData = new FormData();
-      formData.append("resume", file);
+         formData.append("resume", file);
          const response=await api.post('/resume-session',formData);
          return response.data;
 
@@ -168,7 +168,7 @@ export const sessionSlice = createSlice({
                 state.message = action.payload;
             })
 
-             .addCase(resumeCreateSession.pending, (state) => { state.isLoading = true; state.isGenerating = true; state.activeSession = null; })
+            .addCase(resumeCreateSession.pending, (state) => { state.isLoading = true; state.isGenerating = true; state.activeSession = null; })
             .addCase(resumeCreateSession.fulfilled, (state) => { state.isLoading = false; })
             .addCase(resumeCreateSession.rejected, (state, action) => {
                 state.isLoading = false;

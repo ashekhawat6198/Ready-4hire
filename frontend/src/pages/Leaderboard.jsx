@@ -20,7 +20,7 @@ const Leaderboard = () => {
           🏆 Leaderboard
         </h1>
         <p className="text-slate-500 mt-2 text-sm sm:text-lg font-medium">
-          Top performers of this cycle
+          Top Performers 
         </p>
       </div>
 

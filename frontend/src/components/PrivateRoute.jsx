@@ -1,4 +1,4 @@
-// frontend/src/components/PrivateRoute.jsx
+
 import { Navigate, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -6,7 +6,7 @@ const PrivateRoute = () => {
   const { user, isLoading } = useSelector((state) => state.auth);
 
   if (isLoading) {
-    // Optionally return a full-screen spinner here
+   
     return (
       <div className="flex justify-center items-center min-h-[80vh]">
         <svg className="animate-spin h-10 w-10 text-teal-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
