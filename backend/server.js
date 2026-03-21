@@ -8,12 +8,15 @@ import userRoutes from "./routes/userRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import leaderboardRoutes from "./routes/leaderboardRoutes.js"
+import path from "path";
 
 dotenv.config();
 
 connectDB();
 
 const app = express();
+
+const _dirname=path.resolve();
 
 const server = http.createServer(app);
 
@@ -65,10 +68,17 @@ io.on("connection", (socket) => {
     });
 });
 
+
 app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
+
+
+app.use(express.static(path.join(_dirname,"/frontend/dist")))
+app.get("/{*any}",(req,res)=>{
+    res.sendFile(path.resolve(_dirname,"frontend","dist","index.html"))
+})
 
 server.listen(
     PORT,

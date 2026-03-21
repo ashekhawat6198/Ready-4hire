@@ -1,1 +1,2 @@
-ai-service/.env
+.env
+node_modules

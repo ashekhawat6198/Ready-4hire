@@ -14,6 +14,7 @@
     "@react-oauth/google": "^0.13.4",
     "@reduxjs/toolkit": "^2.11.2",
     "axios": "^1.13.5",
+    "backend": "file:..",
     "chart.js": "^4.5.1",
     "jwt-decode": "^4.0.0",
     "react": "^19.2.0",

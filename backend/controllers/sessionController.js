@@ -98,7 +98,7 @@ const createSession = asyncHandler(async (req, res) => {
       }
 
       const aiData = await aiResponse.json();
-      console.log("AI Response:", aiData);
+     
       const codingCount =
         interviewType === "coding-mix" ? Math.floor(count * 0.2) : 0;
       // C. Map the raw questions into the structured Mongoose sub-document format
@@ -583,7 +583,7 @@ const createResumeSession = asyncHandler(async (req, res) => {
       const pdfData = await result.getText();
       const resumeText = pdfData.text;
 
-      console.log(resumeText);
+     
 
       const questionCount = Math.floor(Math.random() * 11) + 5;
 
@@ -603,7 +603,7 @@ const createResumeSession = asyncHandler(async (req, res) => {
       }
 
       const aiData = await aiResponse.json();
-      console.log("AI Response:", aiData);
+    
 
       const codingCount = Math.floor(questionCount * 0.2);
 
