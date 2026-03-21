@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = `${import.meta.env.https://ready4hire-5di8.onrender.com/api}/users/`;
+const API_URL = `https://ready4hire-5di8.onrender.com/api/users/`;
 
 const user = JSON.parse(localStorage.getItem("user"));
 
