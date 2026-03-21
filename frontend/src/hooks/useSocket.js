@@ -4,7 +4,7 @@ import { socketUpdateSession } from "../features/sessions/sessionSlice";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 
-const BACKEND_URL = import.meta.env.VITE_API_URL.replace("/api", "");
+const BACKEND_URL = "https://ready4hire-5di8.onrender.com/api"
 
 const useSocket = () => {
   const dispatch = useDispatch();

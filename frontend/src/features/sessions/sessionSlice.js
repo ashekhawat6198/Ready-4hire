@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const API_URL = `${import.meta.env.VITE_API_URL}/sessions/`;
+const API_URL = "https://ready4hire-5di8.onrender.com/api/sessions/";
 
 const api = axios.create({ baseURL: API_URL })
 api.interceptors.request.use((request) => {

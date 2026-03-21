@@ -1,7 +1,7 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const API_URL=`${import.meta.env.VITE_API_URL}/rank/`;
+const API_URL="https://ready4hire-5di8.onrender.com/api/rank/";
 
 const initialState = {
   leaderboard: [],
