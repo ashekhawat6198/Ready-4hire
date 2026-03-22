@@ -6,7 +6,7 @@ python-dotenv
 ollama
 openai-whisper
 pydub
-pyaudioop
+
 ffmpeg-python
 python-multipart
 groq
