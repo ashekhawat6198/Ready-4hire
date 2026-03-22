@@ -9,8 +9,6 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from typing import Optional
 from groq import Groq  
-import whisper
-from pydub import AudioSegment
 import re
 
 load_dotenv()
@@ -33,16 +31,9 @@ app.add_middleware(
 )
 
 
-WHISPER_MODEL = None
 
-try:
-    print("Loading Whisper Model...")
-    WHISPER_MODEL = whisper.load_model("base.en")
-    print("Whisper Model Loaded Successfully")
-except Exception as e:
-    print("Error while loading Whisper Model:", e)
 
-# ---------------- MODELS ----------------
+
 
 class QuestionRequest(BaseModel):
     role: str = "MERN Stack Developer"
@@ -137,24 +128,17 @@ async def generate_questions(request: QuestionRequest):
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
     try:
-        audio_bytes=await file.read()
-        audio_in_memory=io.BytesIO(audio_bytes)
-        audio_segment=AudioSegment.from_file(audio_in_memory)
-        with tempfile.NamedTemporaryFile(delete=False,suffix=".mp3") as tmp:
-            temp_audio_path=tmp.name
-            audio_segment.export(temp_audio_path,format="mp3")
-        if not WHISPER_MODEL:
-            raise HTTPException(status_code=503,detail="Whisper Model is not loaded")
-        
-        result=WHISPER_MODEL.transcribe(temp_audio_path)
-                
-        os.remove(temp_audio_path)
-        return {"transcription":result["text"].strip()}
+        audio_bytes = await file.read()
+
+        transcription = client.audio.transcriptions.create(
+            model="whisper-large-v3",
+            file=(file.filename or "audio.mp3", audio_bytes),
+        )
+
+        return {"transcription": transcription.text.strip()}
 
     except Exception as e:
-        if 'temp_audio_path' in locals() and os.path.exists(temp_audio_path):
-            os.remove(temp_audio_path)
-        raise HTTPException(status_code=500,detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 
