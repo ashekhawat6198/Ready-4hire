@@ -9,7 +9,7 @@ import mongoose from "mongoose";
 import { PDFParse } from "pdf-parse";
 import User from "../models/User.js";
 
-const AI_SERVICE_URL = "http://localhost:8000";
+const AI_SERVICE_URL = "https://ready-4hire-2.onrender.com";
 
 // Helper function to send an update via Socket.io
 const pushSocketUpdate = (
