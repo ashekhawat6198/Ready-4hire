@@ -104,7 +104,7 @@ async def generate_questions(request: QuestionRequest):
         )
 
         response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -117,7 +117,7 @@ async def generate_questions(request: QuestionRequest):
 
         return QuestionResponse(
             question=questions[:request.count],
-            model_used="openai/gpt-oss-20b"
+            model_used="llama-3.3-70b-versatile"
         )
 
     except Exception as e:
@@ -177,7 +177,7 @@ async def evaluate(request: EvaluationRequest):
         )
 
         response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -240,7 +240,7 @@ async def resume_interview(request: ResumeInterviewRequest):
         
 
          response = client.chat.completions.create(
-            model="openai/gpt-oss-20b",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
@@ -255,12 +255,16 @@ async def resume_interview(request: ResumeInterviewRequest):
         ]
          return ResumeInterviewResponse(
             questions=questions[:request.count],
-            model_used="openai/gpt-oss-20b"
+            model_used="llama-3.3-70b-versatile"
         )
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":

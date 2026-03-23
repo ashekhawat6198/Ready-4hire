@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import useSocket from './hooks/useSocket';
 import { ToastContainer } from 'react-toastify';
@@ -14,8 +14,23 @@ import NotFound from './pages/NotFound';
 import ResumeUploader from './pages/ResumeUploader';
 import Leaderboard from './pages/Leaderboard';
 
+const FASTAPI_URL = "https://ready-4hire-2.onrender.com"; 
+
 const App = () => {
   useSocket();
+
+  useEffect(() => {
+    const wakeUp = async () => {
+      try {
+        await fetch(`${FASTAPI_URL}/health`);
+        console.log("FastAPI is awake");
+      } catch {
+        console.warn("FastAPI wake-up ping failed — it may still be starting");
+      }
+    };
+    wakeUp();
+  }, []);
+
   return (
     <div className='min-h-screen bg-gray-50'>
       <Header />
@@ -33,10 +48,8 @@ const App = () => {
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
-
       </main>
       <ToastContainer position='top-right' autoClose={3000}/>
-
     </div>
   )
 }
